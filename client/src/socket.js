@@ -3,8 +3,7 @@ import { io } from "socket.io-client";
 
 export const state = reactive({
   connected: false,
-  fooEvents: [],
-  barEvents: []
+  weatherData: []
 });
 
 // "undefined" means the URL will be computed from the `window.location` object
@@ -15,22 +14,18 @@ export const socket = io(URL, {
 })
 
 socket.on("connect", () => {
-    state.connected = true;
-  console.log('connect')
-  socket.emit("requestData", (res) => {
-    console.log(res)
-  })
+  state.connected = true;
+  console.log('client connected')
+
+  socket.emit("requestData")
+});
+
+socket.on('data', (data) => {
+  console.log(data)
+  state.weatherData = data
 });
 
 socket.on("disconnect", () => {
     state.connected = false;
-    console.log('disconnect')
+    console.log('client disconnected')
 });
-
-// socket.on("foo", (...args) => {
-//   state.fooEvents.push(args);
-// });
-
-// socket.on("bar", (...args) => {
-//   state.barEvents.push(args);
-// });
