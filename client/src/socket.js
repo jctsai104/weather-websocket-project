@@ -18,11 +18,16 @@ socket.on("connect", () => {
   console.log('client connected')
 
   socket.emit("requestData")
+  // socket.emit("message")
 });
 
-socket.on('data', (data) => {
+socket.on('requestData', (data) => {
   console.log(data)
   state.weatherData = data
+});
+
+socket.on('message', (data) => {
+  console.log(data)
 });
 
 socket.on("disconnect", () => {
