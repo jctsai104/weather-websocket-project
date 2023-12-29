@@ -11,7 +11,7 @@ npm i
 Run server
 
 ``` = bash
-node server.js
+nest start --watch
 ```
 
 ## Clinet
