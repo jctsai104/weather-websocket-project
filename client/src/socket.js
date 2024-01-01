@@ -18,7 +18,6 @@ socket.on("connect", () => {
   console.log('client connected')
 
   socket.emit("requestData")
-  // socket.emit("message")
 });
 
 socket.on('requestData', (data) => {
