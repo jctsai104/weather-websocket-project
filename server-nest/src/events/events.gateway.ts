@@ -25,7 +25,7 @@ export class EventsGateway {
   ) {
     const clientId = client.id;
     const weather_data = await this.externalApiService.fetchData();
-    Logger.log(weather_data);
+    // Logger.log(weather_data);
     client.emit('requestData', weather_data);
 
     // 如果該客戶端已經有一個定時器，則不再創建新的

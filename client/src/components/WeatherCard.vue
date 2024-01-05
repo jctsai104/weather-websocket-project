@@ -1,58 +1,84 @@
 <template>
     <div>
-        <h1>Location</h1>
-        <div>
-            <i class="fi fi-rr-brightness text-3xl"></i>
+        <div class="flex flex-col gap-4 p-8 m-4 border border-gray-100 rounded-md bg-white bg-opacity-35 backdrop-blur-md">          
+            <div class="flex justify-between items-center">
+                <div class="grid gap-1 text-sm">
+                    <p>{{ location.countyName }}</p> 
+                    <p>{{ location.townName }}</p>
+                </div>
+                <h4 class="text-2xl">{{ weatherelements.temperature }}°C</h4>
+                
+            </div>
+            <div>
+                <i class="fi text-3xl" :class="iconClass"></i>
+                <h3>{{ weatherelements.weather }}</h3>
+            </div>
+            <div class="flex items-center mx-auto">
+                <p>風速 {{ weatherelements.windspeed }}</p>
+                <i class="fi fi-rr-wind text-lg text-center ml-1"></i>
+            </div>
         </div>
-        <div>
-            <h4>Today's Weather</h4>
+        <div class="p-2 text-sm text-[#e4dfda]">
+            <p>{{ dailyTemp.high }}°C / {{ dailyTemp.low }}°C</p>
         </div>
-        <div>
-            <h4>temperature</h4>
-        </div>
-        {{ data }}
     </div>
 </template>
 
 <script setup>
 
 import { socket, state } from "../socket"
-import { computed, onMounted } from "vue";
-
-const data = computed(() => {
-    return state.weatherData
-})
+import { computed, onMounted, ref } from "vue";
 
 const getData = () => {
     socket.connect()
     console.log(state.weatherData)
 }
-
 onMounted(() => {
     getData()
 })
-// import { ref, onMounted } from 'vue';
 
-// const data = ref(null);
+const location = computed(() => {
+    return {
+        countyName: state.weatherData?.GeoInfo?.CountyName,
+        townName: state.weatherData?.GeoInfo?.TownName
+    }
+})
 
-// onMounted(() => {
-//   fetchData();
-// });
+const weatherelements = computed(() => {
+    return {
+        weather: state.weatherData.WeatherElement?.Weather,
+        temperature: state.weatherData.WeatherElement?.AirTemperature,
+        windspeed: state.weatherData.WeatherElement?.WindSpeed
+    }
+})
 
-// function fetchData() {
-//   fetch('https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=CWA-9834876D-639C-40B9-B12B-65544A0D61E0&format=JSON&StationId=467571')
-//     .then(response => {
-//       if (!response.ok) {
-//         throw new Error('Network response was not ok');
-//       }
-//       return response.json();
-//     })
-//     .then(jsonData => {
-//       data.value = jsonData.records;
-//     })
-//     .catch(error => {
-//       console.error('There was a problem with the fetch operation:', error);
-//     });
-// }
+const dailyTemp = computed(() => {
+    return {
+        high: state.weatherData.WeatherElement?.DailyExtreme.DailyHigh.TemperatureInfo.AirTemperature,
+        high_dateTime: state.weatherData.WeatherElement?.DailyExtreme.DailyHigh.TemperatureInfo.Occurred_at.DateTime,
+        low: state.weatherData.WeatherElement?.DailyExtreme.DailyLow.TemperatureInfo.AirTemperature,
+        low_dateTime: state.weatherData.WeatherElement?.DailyExtreme.DailyLow.TemperatureInfo.Occurred_at.DateTime,
+    }
+})
+
+const iconClass = computed(() => {
+  const weather = state.weatherData.WeatherElement?.Weather
+  if (!weather) return '';
+  const weatherToIconMap = {
+    '陰': 'fi-rr-cloud',
+    '雲': 'fi-rr-cloud',
+    '晴': 'fi-rr-brightness',
+    '雨': 'fi-rr-cloud-showers-heavy',
+    '霧': 'fi-rr-cloud-showers-heavy',
+  };
+
+  for (const [key, icon] of Object.entries(weatherToIconMap)) {
+    if (weather.includes(key)) {
+      return icon;
+    }
+  }
+
+  return ''; // Default icon if no match
+})
 
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <p>State: {{ connected }}</p>
+  <p class="text-gray-100">State: {{ connected }}</p>
 </template>
 
 <script>

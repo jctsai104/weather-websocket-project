@@ -22,11 +22,7 @@ socket.on("connect", () => {
 
 socket.on('requestData', (data) => {
   console.log(data)
-  state.weatherData = data
-});
-
-socket.on('message', (data) => {
-  console.log(data)
+  state.weatherData = data.Station[0]
 });
 
 socket.on("disconnect", () => {
